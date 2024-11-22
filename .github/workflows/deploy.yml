@@ -27,12 +27,9 @@ jobs:
       - name: Set up SSH key
         run: |
           eval "$(ssh-agent -s)"
-          ssh-add dokku_key
-          
-          # Ajouter le passphrase si nécessaire
           echo "${{ secrets.DOKKU_SSH_PASSPHRASE }}" | ssh-add dokku_key
 
-      # Étape 4 : Ajouter l'hôte Dokku à known_hosts pour éviter les avertissements
+      # Étape 4 : Ajouter l'hôte Dokku à known_hosts
       - name: Add Dokku host to known_hosts
         run: |
           mkdir -p ~/.ssh
