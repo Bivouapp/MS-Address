@@ -17,13 +17,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Étape 2 : Ajouter la clé privée dans un fichier temporaire
-      - name: Create SSH key file
+      # Étape 2 : Décoder la clé privée
+      - name: Decode SSH key
         run: |
-          echo "${{ secrets.DOKKU_SSH_KEY }}" > dokku_key
+          echo "${{ secrets.DOKKU_SSH_KEY }}" | base64 -d > dokku_key
           chmod 600 dokku_key
 
-      # Étape 3 : Démarrer ssh-agent et ajouter la clé avec passphrase
+      # Étape 3 : Ajouter la clé privée à ssh-agent avec la passphrase
       - name: Add SSH key to agent
         run: |
           eval "$(ssh-agent -s)"
