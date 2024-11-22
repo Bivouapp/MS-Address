@@ -27,8 +27,6 @@ jobs:
       - name: Add SSH key to agent with passphrase
         run: |
           eval "$(ssh-agent -s)"
-          echo "${{ secrets.DOKKU_SSH_KEY_BASE64 }}" | base64 -d > dokku_key
-          chmod 600 dokku_key
           expect << EOF
           spawn ssh-add dokku_key
           expect "Enter passphrase for dokku_key:"
