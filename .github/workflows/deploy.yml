@@ -1,4 +1,4 @@
-name: Auto-Deploy to Dokku
+name: Deploy to Dokku
 
 on:
   push:
