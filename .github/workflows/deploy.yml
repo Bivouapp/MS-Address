@@ -1,4 +1,4 @@
-name: Auto-Deploy to Dokku
+name: Deploy to Dokku
 
 on:
   push:
@@ -17,18 +17,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Étape 2 : Configurer SSH
-      - name: Set up SSH key
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.DOKKU_SSH_KEY }}
-          ssh-passphrase: ${{ secrets.DOKKU_SSH_PASSPHRASE }}
+      # Étape 2 : Ajouter la clé privée dans un fichier temporaire
+      - name: Create SSH key file
+        run: |
+          echo "${{ secrets.DOKKU_SSH_KEY }}" > dokku_key
+          chmod 600 dokku_key
 
-      # Étape 3 : Ajouter le serveur Dokku à known_hosts
+      # Étape 3 : Démarrer ssh-agent et ajouter la clé avec passphrase
+      - name: Add SSH key to agent
+        run: |
+          eval "$(ssh-agent -s)"
+          echo "${{ secrets.DOKKU_SSH_PASSPHRASE }}" | ssh-add dokku_key
+
+      # Étape 4 : Ajouter l'hôte Dokku à known_hosts
       - name: Add Dokku host to known_hosts
         run: |
           ssh-keyscan -H ${{ secrets.DOKKU_HOST }} >> ~/.ssh/known_hosts
 
-      # Étape 4 : Déployer avec Dokku
+      # Étape 5 : Déployer avec Dokku
       - name: Deploy to Dokku
         run: git push dokku main:master
+
+      # Étape 6 : Nettoyer la clé SSH
+      - name: Cleanup SSH key
+        run: rm dokku_key
