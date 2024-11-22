@@ -1,4 +1,4 @@
-name: Deploy to Dokku
+name: Auto-Deploy to Dokku
 
 on:
   push:
@@ -23,30 +23,25 @@ jobs:
           echo "${{ secrets.DOKKU_SSH_KEY }}" | base64 -d > dokku_key
           chmod 600 dokku_key
 
-      # Étape 3 : Installer expect
-      - name: Install expect
-        run: sudo apt-get install -y expect
-
-      # Étape 4 : Ajouter la clé privée à ssh-agent avec la passphrase
-      - name: Add SSH key to agent with passphrase
+      # Étape 3 : Configurer l'agent SSH et ajouter la clé avec la passphrase
+      - name: Set up SSH key
         run: |
           eval "$(ssh-agent -s)"
-          expect << EOF
-          spawn ssh-add dokku_key
-          expect "Enter passphrase for dokku_key:"
-          send "${{ secrets.DOKKU_SSH_PASSPHRASE }}\r"
-          expect eof
-          EOF
+          ssh-add dokku_key
+          
+          # Ajouter le passphrase si nécessaire
+          echo "${{ secrets.DOKKU_SSH_PASSPHRASE }}" | ssh-add dokku_key
 
-      # Étape 5 : Ajouter l'hôte Dokku à known_hosts
+      # Étape 4 : Ajouter l'hôte Dokku à known_hosts pour éviter les avertissements
       - name: Add Dokku host to known_hosts
         run: |
+          mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.DOKKU_HOST }} >> ~/.ssh/known_hosts
 
-      # Étape 6 : Déployer avec Dokku
+      # Étape 5 : Déployer sur Dokku
       - name: Deploy to Dokku
         run: git push dokku main:master
 
-      # Étape 7 : Nettoyer la clé SSH
+      # Étape 6 : Nettoyer la clé SSH
       - name: Cleanup SSH key
         run: rm dokku_key
