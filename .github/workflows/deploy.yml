@@ -24,10 +24,17 @@ jobs:
           chmod 600 dokku_key
 
       # Étape 3 : Ajouter la clé privée à ssh-agent avec la passphrase
-      - name: Add SSH key to agent
+      - name: Add SSH key to agent with passphrase
         run: |
           eval "$(ssh-agent -s)"
-          echo "${{ secrets.DOKKU_SSH_PASSPHRASE }}" | ssh-add dokku_key
+          echo "${{ secrets.DOKKU_SSH_KEY_BASE64 }}" | base64 -d > dokku_key
+          chmod 600 dokku_key
+          expect << EOF
+          spawn ssh-add dokku_key
+          expect "Enter passphrase for dokku_key:"
+          send "${{ secrets.DOKKU_SSH_PASSPHRASE }}\r"
+          expect eof
+          EOF
 
       # Étape 4 : Ajouter l'hôte Dokku à known_hosts
       - name: Add Dokku host to known_hosts
