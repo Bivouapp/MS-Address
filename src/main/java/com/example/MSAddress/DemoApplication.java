@@ -1,4 +1,4 @@
-package com.example.MSUser;
+package com.example.MSAddress;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

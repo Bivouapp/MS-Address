@@ -1,4 +1,4 @@
-package com.example.MSUser;
+package com.example.MSAddress;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

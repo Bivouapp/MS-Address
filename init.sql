@@ -1,12 +1,17 @@
-CREATE TABLE users (
-    user_id serial PRIMARY KEY,
-    first_name varchar(30),
-    last_name varchar(30),
-    email varchar(80) NOT NULL,
-    phone_number varchar(20),
-    password varchar(100) NOT NULL,
-    is_host boolean default false,
-    is_admin boolean default false
+-- Création de la table addresses
+CREATE TABLE addresses (
+                           address_id serial PRIMARY KEY,
+                           user_id int REFERENCES users(user_id) ON DELETE CASCADE,
+                           number varchar(10),
+                           street varchar(100),
+                           city varchar(50),
+                           postal_code varchar(20),
+                           latitude double precision,
+                           longitude double precision
 );
 
-INSERT INTO users(first_name,last_name,email,phone_number,password) VALUES('Tom','Robinson','tom.rob@yopmail.com','+15103754657','123456');
+-- Insertion de données dans la table addresses
+INSERT INTO addresses(user_id, number, street, city, postal_code, latitude, longitude)
+VALUES
+    (1, '123', 'Main Street', 'Springfield', '12345', 37.7749, -122.4194),
+    (1, '456', 'Broadway', 'New York', '10001', 40.7128, -74.0060);

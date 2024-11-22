@@ -1,6 +1,6 @@
-package com.example.MSUser.security;
+package com.example.MSAddress.security;
 
-import com.example.MSUser.utils.JwtUtils;
+import com.example.MSAddress.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
