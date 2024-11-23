@@ -1,44 +1,44 @@
-name: Deploy to Dokku
+#name: Deploy to Dokku
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
 
-    steps:
-      # Étape 1 : Vérifier le code
-      - name: Checkout repository
-        uses: actions/checkout@v3
+#     steps:
+#       # Étape 1 : Vérifier le code
+#       - name: Checkout repository
+#         uses: actions/checkout@v3
 
-      # Étape 2 : Décoder la clé privée
-      - name: Decode SSH key
-        run: |
-          echo "${{ secrets.DOKKU_SSH_KEY }}" | base64 -d > dokku_key
-          chmod 600 dokku_key
+#       # Étape 2 : Décoder la clé privée
+#       - name: Decode SSH key
+#         run: |
+#           echo "${{ secrets.DOKKU_SSH_KEY }}" | base64 -d > dokku_key
+#           chmod 600 dokku_key
 
-      # Étape 3 : Configurer l'agent SSH et ajouter la clé avec la passphrase
-      - name: Set up SSH key
-        run: |
-          eval "$(ssh-agent -s)"
-          echo "${{ secrets.DOKKU_SSH_PASSPHRASE }}" | ssh-add dokku_key
+#       # Étape 3 : Configurer l'agent SSH et ajouter la clé avec la passphrase
+#       - name: Set up SSH key
+#         run: |
+#           eval "$(ssh-agent -s)"
+#           echo "${{ secrets.DOKKU_SSH_PASSPHRASE }}" | ssh-add dokku_key
 
-      # Étape 4 : Ajouter l'hôte Dokku à known_hosts
-      - name: Add Dokku host to known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.DOKKU_HOST }} >> ~/.ssh/known_hosts
+#       # Étape 4 : Ajouter l'hôte Dokku à known_hosts
+#       - name: Add Dokku host to known_hosts
+#         run: |
+#           mkdir -p ~/.ssh
+#           ssh-keyscan -H ${{ secrets.DOKKU_HOST }} >> ~/.ssh/known_hosts
 
-      # Étape 5 : Déployer sur Dokku
-      - name: Deploy to Dokku
-        run: git push dokku main:master
+#       # Étape 5 : Déployer sur Dokku
+#       - name: Deploy to Dokku
+#         run: git push dokku main:master
 
-      # Étape 6 : Nettoyer la clé SSH
-      - name: Cleanup SSH key
-        run: rm dokku_key
+#       # Étape 6 : Nettoyer la clé SSH
+#       - name: Cleanup SSH key
+#         run: rm dokku_key
