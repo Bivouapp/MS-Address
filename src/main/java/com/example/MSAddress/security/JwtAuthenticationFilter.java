@@ -1,4 +1,4 @@
-package com.example.MSAddress.security;
+/*package com.example.MSAddress.security;
 
 import com.example.MSAddress.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
@@ -51,4 +51,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // Passer au filtre suivant
         filterChain.doFilter(request, response);
     }
-}
+}*/
